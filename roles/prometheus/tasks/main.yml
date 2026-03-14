@@ -1,0 +1,42 @@
+# roles/prometheus/tasks/main.yml - Deploy and configure Prometheus
+---
+- name: Create Prometheus configuration directory
+  ansible.builtin.file:
+    path: "{{ prometheus_config_dir }}"
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+
+- name: Generate Prometheus configuration
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: "{{ prometheus_config_dir }}/prometheus.yml"
+    mode: "0644"
+  delegate_to: localhost
+  notify: Reload Prometheus
+
+- name: Generate Prometheus alert rules
+  ansible.builtin.template:
+    src: alert_rules.yml.j2
+    dest: "{{ prometheus_config_dir }}/alert_rules.yml"
+    mode: "0644"
+  delegate_to: localhost
+  notify: Reload Prometheus
+
+- name: Start Prometheus container
+  community.docker.docker_container:
+    name: "{{ prometheus_container_name }}"
+    image: "{{ prometheus_image }}"
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "{{ prometheus_port }}:9090"
+    volumes:
+      - "{{ prometheus_config_dir }}/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      - "{{ prometheus_config_dir }}/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro"
+    networks:
+      - name: "{{ docker_network_name }}"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.enable-lifecycle"
+  delegate_to: localhost
