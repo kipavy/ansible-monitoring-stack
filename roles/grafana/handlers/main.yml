@@ -1,0 +1,8 @@
+# roles/grafana/handlers/main.yml - Restart Grafana when config changes
+---
+- name: Restart Grafana
+  community.docker.docker_container:
+    name: "{{ grafana_container_name }}"
+    state: started
+    restart: true
+  delegate_to: localhost

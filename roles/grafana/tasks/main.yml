@@ -1,0 +1,45 @@
+# roles/grafana/tasks/main.yml - Deploy and configure Grafana
+---
+- name: Create Grafana provisioning directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ grafana_provisioning_dir }}/datasources"
+    - "{{ grafana_provisioning_dir }}/dashboards"
+  delegate_to: localhost
+
+- name: Generate Grafana datasource provisioning
+  ansible.builtin.template:
+    src: datasource.yml.j2
+    dest: "{{ grafana_provisioning_dir }}/datasources/datasource.yml"
+    mode: "0644"
+  delegate_to: localhost
+  notify: Restart Grafana
+
+- name: Generate Grafana dashboard provider
+  ansible.builtin.template:
+    src: dashboard_provider.yml.j2
+    dest: "{{ grafana_provisioning_dir }}/dashboards/dashboard_provider.yml"
+    mode: "0644"
+  delegate_to: localhost
+  notify: Restart Grafana
+
+- name: Start Grafana container
+  community.docker.docker_container:
+    name: "{{ grafana_container_name }}"
+    image: "{{ grafana_image }}"
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "{{ grafana_port }}:3000"
+    env:
+      GF_SECURITY_ADMIN_USER: "{{ grafana_admin_user }}"
+      GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_admin_password }}"
+    volumes:
+      - "{{ grafana_provisioning_dir }}/datasources:/etc/grafana/provisioning/datasources:ro"
+      - "{{ grafana_provisioning_dir }}/dashboards:/etc/grafana/provisioning/dashboards:ro"
+    networks:
+      - name: "{{ docker_network_name }}"
+  delegate_to: localhost

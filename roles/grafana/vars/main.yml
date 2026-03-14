@@ -1,0 +1,5 @@
+# roles/grafana/vars/main.yml - Role-specific variables
+---
+grafana_datasource_name: Prometheus
+grafana_datasource_type: prometheus
+grafana_datasource_url: "http://{{ prometheus_container_name }}:{{ prometheus_port }}"
