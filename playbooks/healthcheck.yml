@@ -1,0 +1,51 @@
+# playbooks/healthcheck.yml - Verify all monitoring services are healthy
+---
+- name: Healthcheck monitoring stack
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Check Prometheus health
+      ansible.builtin.uri:
+        url: "http://localhost:{{ prometheus_port }}/-/healthy"
+        method: GET
+        status_code: 200
+      register: prometheus_health
+      ignore_errors: true
+
+    - name: Check Alertmanager health
+      ansible.builtin.uri:
+        url: "http://localhost:{{ alertmanager_port }}/-/healthy"
+        method: GET
+        status_code: 200
+      register: alertmanager_health
+      ignore_errors: true
+
+    - name: Check Node Exporter health
+      ansible.builtin.uri:
+        url: "http://localhost:{{ node_exporter_port }}/metrics"
+        method: GET
+        status_code: 200
+      register: node_exporter_health
+      ignore_errors: true
+
+    - name: Check Grafana health
+      ansible.builtin.uri:
+        url: "http://localhost:{{ grafana_port }}/api/health"
+        method: GET
+        status_code: 200
+      register: grafana_health
+      ignore_errors: true
+
+    - name: Display healthcheck summary
+      ansible.builtin.debug:
+        msg:
+          - "======================================"
+          - "     MONITORING STACK HEALTHCHECK"
+          - "======================================"
+          - "Prometheus:     {{ 'OK' if prometheus_health is succeeded else 'KO' }}"
+          - "Alertmanager:   {{ 'OK' if alertmanager_health is succeeded else 'KO' }}"
+          - "Node Exporter:  {{ 'OK' if node_exporter_health is succeeded else 'KO' }}"
+          - "Grafana:        {{ 'OK' if grafana_health is succeeded else 'KO' }}"
+          - "======================================"

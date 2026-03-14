@@ -1,0 +1,36 @@
+# playbooks/teardown.yml - Remove all monitoring containers and network
+---
+- name: Tear down monitoring stack
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Stop and remove Grafana container
+      community.docker.docker_container:
+        name: "{{ grafana_container_name }}"
+        state: absent
+
+    - name: Stop and remove Prometheus container
+      community.docker.docker_container:
+        name: "{{ prometheus_container_name }}"
+        state: absent
+
+    - name: Stop and remove Alertmanager container
+      community.docker.docker_container:
+        name: "{{ alertmanager_container_name }}"
+        state: absent
+
+    - name: Stop and remove Node Exporter container
+      community.docker.docker_container:
+        name: "{{ node_exporter_container_name }}"
+        state: absent
+
+    - name: Remove Docker monitoring network
+      community.docker.docker_network:
+        name: "{{ docker_network_name }}"
+        state: absent
+
+    - name: Display teardown summary
+      ansible.builtin.debug:
+        msg: "Monitoring stack has been completely removed."

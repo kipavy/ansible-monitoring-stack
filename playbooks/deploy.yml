@@ -1,0 +1,28 @@
+# playbooks/deploy.yml - Deploy the full monitoring stack
+---
+- name: Deploy monitoring stack
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Create Docker network for monitoring
+      community.docker.docker_network:
+        name: "{{ docker_network_name }}"
+        state: present
+
+  roles:
+    - node-exporter
+    - alertmanager
+    - prometheus
+    - grafana
+
+  post_tasks:
+    - name: Display deployment summary
+      ansible.builtin.debug:
+        msg:
+          - "Monitoring stack deployed successfully!"
+          - "Prometheus:     http://localhost:{{ prometheus_port }}"
+          - "Grafana:        http://localhost:{{ grafana_port }}"
+          - "Alertmanager:   http://localhost:{{ alertmanager_port }}"
+          - "Node Exporter:  http://localhost:{{ node_exporter_port }}/metrics"
