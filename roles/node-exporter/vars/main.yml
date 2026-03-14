@@ -1,0 +1,5 @@
+# roles/node-exporter/vars/main.yml - Role-specific variables
+---
+# Node Exporter has minimal configuration
+# Port and image are defined in group_vars/all.yml
+node_exporter_metrics_path: /metrics

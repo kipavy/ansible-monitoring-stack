@@ -1,0 +1,13 @@
+# roles/node-exporter/tasks/main.yml - Deploy Node Exporter
+---
+- name: Start Node Exporter container
+  community.docker.docker_container:
+    name: "{{ node_exporter_container_name }}"
+    image: "{{ node_exporter_image }}"
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "{{ node_exporter_port }}:9100"
+    networks:
+      - name: "{{ docker_network_name }}"
+  delegate_to: localhost
