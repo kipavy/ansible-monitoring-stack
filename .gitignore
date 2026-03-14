@@ -1,0 +1,25 @@
+# Ansible Vault password
+.vault_pass
+
+# Retry files
+*.retry
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Instructions (not part of the project)
+INSTRUCTIONS.md
