@@ -1,0 +1,6 @@
+# inventory/group_vars/all.vault.yml - Sensitive variables
+# WARNING: This file must be encrypted with ansible-vault before committing!
+# Run: ansible-vault encrypt inventory/group_vars/all.vault.yml --vault-password-file .vault_pass
+
+grafana_admin_password: "SuperSecretGrafana123!"
+alertmanager_webhook_url: "http://localhost:9999/webhook"
