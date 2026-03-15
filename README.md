@@ -21,10 +21,10 @@ graph LR
     Ansible -- deploy --> Network["Docker Network: monitoring"]
 
     subgraph Network["Docker Network: monitoring"]
-        NE[node-exporter\n:9100]
-        AM[alertmanager\n:9093]
-        GF[grafana\n:3000]
-        PR[prometheus\n:9090]
+        NE["node-exporter<br/>:9100"]
+        AM["alertmanager<br/>:9093"]
+        GF["grafana<br/>:3000"]
+        PR["prometheus<br/>:9090"]
 
         PR -- scrapes --> NE
         PR -- sends alerts --> AM
