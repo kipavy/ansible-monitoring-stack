@@ -14,7 +14,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "targets": [
         {
-          "expr": "100 - (avg by(instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "expr": "avg_over_time((clamp_min(100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100), 0))[5m:1m])",
           "legendFormat": "{{ instance }}"
         }
       ],
@@ -54,7 +54,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_free_bytes{mountpoint=\"/\"}) / node_filesystem_size_bytes{mountpoint=\"/\"} * 100",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\",fstype=\"ext4\"} - node_filesystem_free_bytes{mountpoint=\"/\",fstype=\"ext4\"}) / node_filesystem_size_bytes{mountpoint=\"/\",fstype=\"ext4\"} * 100",
           "legendFormat": "{{ instance }}"
         }
       ],
