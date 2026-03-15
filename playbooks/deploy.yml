@@ -4,6 +4,9 @@
   hosts: localhost
   connection: local
   gather_facts: false
+  vars_files:
+    - ../inventory/group_vars/all.yml
+    - ../inventory/group_vars/all.vault.yml
 
   pre_tasks:
     - name: Create Docker network for monitoring
