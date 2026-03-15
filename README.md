@@ -51,46 +51,7 @@ graph LR
 - **Ansible ≥ 2.14** with Python 3.x
 - **community.docker** Ansible collection
 
-## Installing Ansible
-
-### Option A: Local install (pip)
-
-```bash
-pip install ansible
-ansible-galaxy collection install community.docker
-```
-
-### Option B: Without installing (Docker)
-
-You can run Ansible directly from a Docker container without installing anything on your machine.
-
-```bash
-docker run --rm -it \
-  -v "$(pwd)":/ansible \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -w /ansible \
-  cytopia/ansible:latest \
-  ansible-playbook playbooks/deploy.yml --vault-password-file .vault_pass
-```
-
-To make this easier, add an alias to your shell profile (`~/.bashrc` or `~/.zshrc`):
-
-```bash
-alias ansible-playbook='docker run --rm -it \
-  -v "$(pwd)":/ansible \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -w /ansible \
-  cytopia/ansible:latest \
-  ansible-playbook'
-```
-
-Then use it normally:
-
-```bash
-ansible-playbook playbooks/deploy.yml --vault-password-file .vault_pass
-```
-
-## Setup - Step by Step
+## Setup
 
 ### 1. Install the required Ansible collection
 
@@ -105,22 +66,24 @@ echo 'your-secure-vault-password' > .vault_pass
 chmod 600 .vault_pass
 ```
 
+> `ansible.cfg` already references `.vault_pass`, so no need to pass `--vault-password-file` on every command.
+
 ### 3. Encrypt the secrets file
 
 ```bash
-ansible-vault encrypt inventory/group_vars/all.vault.yml --vault-password-file .vault_pass
+ansible-vault encrypt inventory/group_vars/all.vault.yml
 ```
 
 ### 4. Deploy the monitoring stack
 
 ```bash
-ansible-playbook playbooks/deploy.yml --vault-password-file .vault_pass
+ansible-playbook playbooks/deploy.yml
 ```
 
 ### 5. Verify all services are healthy
 
 ```bash
-ansible-playbook playbooks/healthcheck.yml --vault-password-file .vault_pass
+ansible-playbook playbooks/healthcheck.yml
 ```
 
 ### 6. Access the services
@@ -137,7 +100,7 @@ Default Grafana credentials: `admin` / *(password from vault)*
 ### 7. Tear down the stack
 
 ```bash
-ansible-playbook playbooks/teardown.yml --vault-password-file .vault_pass
+ansible-playbook playbooks/teardown.yml
 ```
 
 ## Ansible Concepts Demonstrated
