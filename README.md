@@ -51,7 +51,46 @@ graph LR
 - **Ansible ≥ 2.14** with Python 3.x
 - **community.docker** Ansible collection
 
-## Setup -Step by Step
+## Installing Ansible
+
+### Option A: Local install (pip)
+
+```bash
+pip install ansible
+ansible-galaxy collection install community.docker
+```
+
+### Option B: Without installing (Docker)
+
+You can run Ansible directly from a Docker container without installing anything on your machine.
+
+```bash
+docker run --rm -it \
+  -v "$(pwd)":/ansible \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -w /ansible \
+  cytopia/ansible:latest \
+  ansible-playbook playbooks/deploy.yml --vault-password-file .vault_pass
+```
+
+To make this easier, add an alias to your shell profile (`~/.bashrc` or `~/.zshrc`):
+
+```bash
+alias ansible-playbook='docker run --rm -it \
+  -v "$(pwd)":/ansible \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -w /ansible \
+  cytopia/ansible:latest \
+  ansible-playbook'
+```
+
+Then use it normally:
+
+```bash
+ansible-playbook playbooks/deploy.yml --vault-password-file .vault_pass
+```
+
+## Setup - Step by Step
 
 ### 1. Install the required Ansible collection
 
