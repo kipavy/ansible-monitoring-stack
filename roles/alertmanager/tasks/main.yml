@@ -2,7 +2,7 @@
 ---
 - name: Create Alertmanager configuration directory
   ansible.builtin.file:
-    path: /etc/alertmanager
+    path: "{{ alertmanager_config_dir }}"
     state: directory
     mode: "0755"
   delegate_to: localhost
@@ -10,7 +10,7 @@
 - name: Generate Alertmanager configuration
   ansible.builtin.template:
     src: alertmanager.yml.j2
-    dest: /etc/alertmanager/alertmanager.yml
+    dest: "{{ alertmanager_config_dir }}/alertmanager.yml"
     mode: "0644"
   delegate_to: localhost
   notify: Reload Alertmanager
@@ -24,7 +24,7 @@
     ports:
       - "{{ alertmanager_port }}:9093"
     volumes:
-      - "/etc/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro"
+      - "{{ alertmanager_config_dir }}/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro"
     networks:
       - name: "{{ docker_network_name }}"
     command:

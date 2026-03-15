@@ -7,7 +7,7 @@ docker_network_name: monitoring
 prometheus_image: prom/prometheus:latest
 prometheus_container_name: prometheus
 prometheus_port: 9090
-prometheus_config_dir: /etc/prometheus
+prometheus_config_dir: "{{ playbook_dir }}/../config/prometheus"
 prometheus_scrape_interval: 15s
 prometheus_evaluation_interval: 15s
 
@@ -20,13 +20,15 @@ node_exporter_port: 9100
 alertmanager_image: prom/alertmanager:latest
 alertmanager_container_name: alertmanager
 alertmanager_port: 9093
+alertmanager_config_dir: "{{ playbook_dir }}/../config/alertmanager"
 
 # Grafana
 grafana_image: grafana/grafana:latest
 grafana_container_name: grafana
 grafana_port: 3000
 grafana_admin_user: admin
-grafana_provisioning_dir: /etc/grafana/provisioning
+grafana_provisioning_dir: "{{ playbook_dir }}/../config/grafana/provisioning"
+grafana_dashboards_dir: "{{ playbook_dir }}/../config/grafana/dashboards"
 
 # Scrape targets for Prometheus
 prometheus_scrape_targets:
