@@ -134,8 +134,6 @@ ansible-playbook playbooks/teardown.yml
 
 ![Grafana Dashboard](docs/grafana_dashboard.png)
 
-![Alertmanager UI](docs/alertmanager.png)
-
 ![Healthcheck Output](docs/healthcheck_output.png)
 
 ## Project Structure
