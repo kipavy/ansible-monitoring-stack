@@ -68,9 +68,21 @@ chmod 600 .vault_pass
 
 > `ansible.cfg` already references `.vault_pass`, so no need to pass `--vault-password-file` on every command.
 
-### 3. Encrypt the secrets file
+### 3. Recreate the vault secrets file
+
+The vault file is committed encrypted. To recreate it from scratch:
 
 ```bash
+ansible-vault decrypt inventory/group_vars/all.vault.yml
+```
+
+Or create a new one with:
+
+```bash
+cat > inventory/group_vars/all.vault.yml << 'EOF'
+grafana_admin_password: "SuperSecretGrafana123!"
+alertmanager_webhook_url: "http://localhost:9999/webhook"
+EOF
 ansible-vault encrypt inventory/group_vars/all.vault.yml
 ```
 
