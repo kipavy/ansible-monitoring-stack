@@ -8,6 +8,7 @@
   loop:
     - "{{ grafana_provisioning_dir }}/datasources"
     - "{{ grafana_provisioning_dir }}/dashboards"
+    - "{{ grafana_dashboards_dir }}"
   delegate_to: localhost
 
 - name: Generate Grafana datasource provisioning
@@ -26,6 +27,14 @@
   delegate_to: localhost
   notify: Restart Grafana
 
+- name: Copy Grafana dashboards
+  ansible.builtin.copy:
+    src: node_exporter_dashboard.json
+    dest: "{{ grafana_dashboards_dir }}/node_exporter_dashboard.json"
+    mode: "0644"
+  delegate_to: localhost
+  notify: Restart Grafana
+
 - name: Start Grafana container
   community.docker.docker_container:
     name: "{{ grafana_container_name }}"
@@ -40,6 +49,7 @@
     volumes:
       - "{{ grafana_provisioning_dir }}/datasources:/etc/grafana/provisioning/datasources:ro"
       - "{{ grafana_provisioning_dir }}/dashboards:/etc/grafana/provisioning/dashboards:ro"
+      - "{{ grafana_dashboards_dir }}:/var/lib/grafana/dashboards:ro"
     networks:
       - name: "{{ docker_network_name }}"
   delegate_to: localhost
